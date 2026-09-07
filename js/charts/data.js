@@ -59,7 +59,14 @@ export function dataPage(host, app) {
     { key: "ci", label: "95% CI", fmt: (_, r) => `${fmt.num(r.irr_lo, 2)} to ${fmt.num(r.irr_hi, 2)}` }, { key: "p", label: "p", fmt: (v) => fmt.pval(v) },
   ], d.lag);
 
-  host.appendChild(el("h3.rule", { text: "5. Rebuild this site" }));
+  host.appendChild(el("h3.rule", { text: "5. The code" }));
+  const repo = el("p");
+  repo.append("The analysis pipeline that builds every table and figure of the paper from these records is public at ");
+  repo.appendChild(el("a", { href: "https://github.com/ac5907846/florida-grid-to-lifeline", target: "_blank", rel: "noopener", text: "github.com/ac5907846/florida-grid-to-lifeline" }));
+  repo.append(": seventeen stages in run order, four download modules for the records that are not a single file, and a DATA.md that lists where each source lives. Point it at a folder holding the raw records and run it; the results it writes are the files this site reads.");
+  host.appendChild(repo);
+
+  host.appendChild(el("h3.rule", { text: "6. Rebuild this site" }));
   host.appendChild(el("pre.pseudo", { text: "cd 06_Paper5_Cascade\\02_analysis\nfor s in a01..a18: py -3 <s>\\analysis.py; py -3 <s>\\figures.py\ncd ..\\05_webapp\npy -3 tools\\build_data.py      # rewrites data\\*.json from the results\npy -3 -m http.server 8000      # then open http://localhost:8000" }));
   host.appendChild(el("p.note", { text: meta.build_note }));
 }
