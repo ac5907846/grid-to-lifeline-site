@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>From grid failure to lifeline failure</title>
+<meta name="description" content="Interactive companion to a study of cross-infrastructure dependency and resilience across nine Florida hurricanes: sewer releases and cell-site outages against the same electricity outage.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<a class="skip" href="#page">Skip to content</a>
+<header class="masthead" id="masthead"></header>
+<nav class="sitenav" id="sitenav" aria-label="Pages"></nav>
+
+<main id="page" class="section">
+  <p class="standfirst">Buffering and recovery autonomy, recomputed on the storms you select: how the power-caused sewer releases ended according to their own narratives, how far ahead of the county's restoration they ended, how many days the wet wells bought, and whether the cell network came back before or after the grid.</p>
+
+  <div class="chart-block" id="chart"></div>
+
+  <p class="note">The end class is read from the narrative by fixed rules with precedence operator, grid, repair; half of the power-caused releases state no end. The county share out on the end day cannot classify a release, because a station's feeder can be restored while the county stays dark.</p>
+
+</main>
+
+<div id="tooltip" class="tooltip" role="status" aria-live="polite"></div>
+
+<script type="module" src="js/pages/recovery.js"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>From grid failure to lifeline failure</title>
+<meta name="description" content="Interactive companion to a study of cross-infrastructure dependency and resilience across nine Florida hurricanes: sewer releases and cell-site outages against the same electricity outage.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<a class="skip" href="#page">Skip to content</a>
+<header class="masthead" id="masthead"></header>
+<nav class="sitenav" id="sitenav" aria-label="Pages"></nav>
+
+<main id="page" class="section">
+  <p class="standfirst">Every county-window on one canvas, any variable against any other, and a profile that lays one county's nine storms side by side. Select a point to open its county.</p>
+
+  <div class="chart-block" id="chart"></div>
+
+  <p class="note">Windows are the landfall day to day 14 (Helene to day 9, before Milton). Excess releases are the count minus the county's baseline for that month outside every storm frame.</p>
+
+</main>
+
+<div id="tooltip" class="tooltip" role="status" aria-live="polite"></div>
+
+<script type="module" src="js/pages/county.js"></script>
+</body>
+</html>
