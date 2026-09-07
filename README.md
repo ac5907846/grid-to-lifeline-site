@@ -10,6 +10,18 @@ in the browser from the JSON files in `data/`, which are generated
 from the analysis outputs in `02_analysis/`. The site is anonymous
 (no author, no affiliation) for review.
 
+## Where it lives
+
+GitHub: <https://github.com/ac5907846/grid-to-lifeline-site>. Hosted on
+Cloudflare Pages as project `grid-to-lifeline`
+(<https://grid-to-lifeline.pages.dev>, custom domain
+<https://lifelines.electriai.com>). To publish a change: rebuild the
+data layer, commit, then
+
+```
+npx wrangler pages deploy . --project-name grid-to-lifeline --branch main
+```
+
 ## Run it
 
 A browser will not read `data/` over `file://`, so serve the folder:
