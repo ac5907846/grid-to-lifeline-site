@@ -29,7 +29,7 @@ export function dataPage(host, app) {
   host.appendChild(src);
 
   host.appendChild(el("h3.rule", { text: "2. The analysis pipeline" }));
-  host.appendChild(el("p", { text: `Eighteen stages, one folder each, run top to bottom with py -3 analysis.py; every figure module reads only its own stage's results. ${S.stages.length} stages are listed from the folders on disk; select one to see the files it writes.` }));
+  host.appendChild(el("p", { text: `One folder per stage, run top to bottom with py -3 analysis.py; every figure module reads only its own stage's results. ${S.stages.length} stages are listed from the folders on disk; select one to see the files it writes.` }));
   const stages = el("div");
   for (const st of S.stages) {
     const det = el("details.stage");
