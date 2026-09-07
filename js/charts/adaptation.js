@@ -72,7 +72,7 @@ export function adaptationChart(host, app) {
     });
     const s = D.summary;
     const note = state.lifeline === "sewer"
-      ? `Equal storm slopes: likelihood ratio ${fmt.num(s.model_B.lr_equal_slopes, 2)} on ${s.model_B.df} df, ${fmt.pval(s.model_B.p)}; equal era slopes ${fmt.pval(s.model_B_era.p)}.`
+      ? `Equal storm slopes: likelihood ratio ${fmt.num(s.model_B.lr_equal_slopes, 2)} on ${s.model_B.df} df, ${fmt.pval(s.model_B.p)}; equal era slopes ${fmt.pval(s.model_B_era.p)} with rain held fixed, ${fmt.pval(s.model_B_era_without_rain.p)} without the rain term (slopes ${s.model_B_era_without_rain.slopes.map((v) => fmt.num(v, 2)).join(" / ")}).`
       : `2024 against 2017 to 2018: Wald ${fmt.num(D.cell_summary.adaptation.era_wald_2024_vs_2017_stat, 1)}, ${fmt.pval(D.cell_summary.adaptation.p)}; DIRS reporting became mandatory for wireless providers in 2024, so a fuller roster reports more outages.`;
     slopeHost.appendChild(el("p.note", { text: note }));
   }
@@ -172,7 +172,7 @@ export function adaptationChart(host, app) {
     lagSide.append(el("p", { text: `Model A with the county's closed stock before the storm: IRR ${fmt.num(ms.irr, 2)} (${fmt.num(ms.irr_lo, 2)} to ${fmt.num(ms.irr_hi, 2)}), ${fmt.pval(ms.p)}: the completed money does not change the slope.` }));
   }
 
-  capHost.innerHTML = "<b>Neither lifeline has decoupled, and the record shows why.</b> The sewer's slope is the same in 2024 as in 2017, across storms and inside the same counties struck twice; the cell network's has risen. The generator and utility projects FEMA funds after a hurricane close a median five years later: half of Irma's were done by Milton, seven years on, and none of Ian's. Drag the month to see what was in place at each landfall.";
+  capHost.innerHTML = "<b>A fall is suggested, not established.</b> With rain held fixed the sewer's 2024 slope is about half its 2017 to 2018 value, but the fall rests on Milton alone (Helene and Debby sit at the 2017 level), the equal-slope tests do not reject, it disappears without the rain term, and the same counties struck twice show no fall in release rates; the cell network's slope has risen. The generator and utility projects FEMA funds after a hurricane close a median five years later: half of Irma's were done by Milton, seven years on, and none of Ian's. Drag the month to see what was in place at each landfall.";
 
   drawSlopes();
   drawPairs();

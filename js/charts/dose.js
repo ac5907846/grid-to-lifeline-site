@@ -176,7 +176,7 @@ export function doseChart(host, app) {
       { key: "ci", label: "95% CI", fmt: (_, r) => ci(r, "or_lo", "or_hi") }, { key: "p", label: "p", fmt: (v) => fmt.pval(v) }], d.cell_models);
   }
 
-  capHost.innerHTML = "<b>The hazard travels by wire.</b> Sewer releases rise about 60 percent per doubling of a county's customer-hours without power; the odds of a cell site being out rise 2.6-fold. Wind, surge and housing damage add nothing once the outage is in (the nested models below). The least-squares line is recomputed on whatever is on screen and is a reading aid, not the paper's estimate; the dashed curve and the tables are.";
+  capHost.innerHTML = "<b>The hazard travels by wire.</b> Sewer releases rise about 60 percent per doubling of a county's customer-hours without power; the odds of a cell site being out rise 2.6-fold. Rain is a second, separate channel; wind, surge and housing damage add nothing once the outage and the rain are in (the nested models below). The least-squares line is recomputed on whatever is on screen and is a reading aid, not the paper's estimate; the dashed curve and the tables are.";
 
   buildBar();
   draw();

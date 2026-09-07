@@ -272,7 +272,7 @@ export function signatureChart(host, app) {
     + `and on the day; neither has a day of buffer. They part at recovery: sewer operators end `
     + `${fmt.pct(h.autonomy.autonomy_among_stated, 0)} of the power-caused spills with a stated end by their own means, `
     + `a median ${h.autonomy.lead.operator.median_lead_days} days before the county is restored, while cell sites come back `
-    + `about a day before the grid. And neither has decoupled: the sewer slope is flat across eras and the cell slope has risen. `
+    + `about a day before the grid. Adaptation is the open question: with rain held fixed the sewer slope is lower in 2024, but the fall rests on Milton alone and vanishes without the rain term, and the cell slope has risen. `
     + `Select storms in the strip to redraw every cell on the subset; the filter does not refit the models, whose estimates are those of the paper.`;
 
   renderStrip();
