@@ -766,3 +766,14 @@ button:disabled { opacity: .4; cursor: default; }
 .tc-limits { margin-top: 1rem; padding: .7rem .9rem; background: #f6f7f8; border-left: 2px solid #8c8c8c; }
 .tc-limits h3 { margin: 0 0 .3rem; font-size: .9rem; }
 .tc-limits ul { margin: 0; padding-left: 1.1rem; font-size: .8rem; line-height: 1.4; }
+
+
+/* ---- loading state ---- */
+.is-loading { min-height: 260px; position: relative; }
+.loading { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .45rem;
+  min-height: 240px; color: var(--muted, #6a7280); font-size: .9rem; }
+.loading-sub { font-size: .78rem; color: #8c8c8c; }
+.spinner { width: 28px; height: 28px; border-radius: 50%; border: 3px solid #e4e7ea; border-top-color: var(--navy);
+  animation: spin .9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation: none; border-top-color: #8c8c8c; } }

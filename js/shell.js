@@ -81,12 +81,15 @@ function buildApp() {
   return app;
 }
 
-async function loadInto(app, needs) {
+async function loadInto(app, needs, onProgress = () => {}) {
   const wanted = new Set(["meta", ...needs]);
   const geo = wanted.has("geo");
   wanted.delete("geo");
   const keys = [...wanted];
-  const parts = await Promise.all(keys.map((k) => getJSON(FILES[k])));
+  const total = keys.length + (geo ? 3 : 0);
+  let done = 0;
+  const step = (path) => getJSON(path).then((v) => { done += 1; onProgress(done, total); return v; });
+  const parts = await Promise.all(keys.map((k) => step(FILES[k])));
   keys.forEach((k, i) => { app[k] = unpack(parts[i]); });
   if (app.windows) {
     for (const r of app.windows) {
@@ -95,13 +98,46 @@ async function loadInto(app, needs) {
   }
   if (geo) {
     const [counties, context, tracks] = await Promise.all([
-      getJSON("data/geo/counties.json"),
-      getJSON("data/geo/context.json"),
-      getJSON("data/geo/tracks.json"),
+      step("data/geo/counties.json"),
+      step("data/geo/context.json"),
+      step("data/geo/tracks.json"),
     ]);
     app.geo = { counties: counties.counties, context, tracks };
   }
   return app;
+}
+
+// what the masthead shows before meta.json arrives (the real values
+// replace it); keep in step with tools/build_data.py
+const STATIC_META = {
+  title: "From grid failure to lifeline failure",
+  short_title: "From grid failure to lifeline failure",
+  subtitle: "Interactive companion to a study of cross-infrastructure dependency and resilience across nine Florida hurricanes, 2017 to 2024.",
+};
+
+/** A loading state inside a chart host: spinner, message, progress.
+    Returns handles to update and remove it. */
+function showLoading(host) {
+  const box = el("div.loading", { role: "status", "aria-live": "polite" }, [
+    el("span.spinner", { "aria-hidden": "true" }),
+    el("span.loading-text", { text: "Loading the data layer" }),
+    el("span.loading-sub", { text: "" }),
+  ]);
+  host.classList.add("is-loading");
+  host.appendChild(box);
+  const text = box.querySelector(".loading-text");
+  const sub = box.querySelector(".loading-sub");
+  let removed = false;
+  return {
+    progress(done, total) { if (!removed) sub.textContent = `${done} of ${total} files`; },
+    note(msg) { if (!removed) text.textContent = msg; },
+    done() {
+      if (removed) return;
+      removed = true;
+      host.classList.remove("is-loading");
+      if (box.parentNode) box.parentNode.removeChild(box);
+    },
+  };
 }
 
 function masthead(meta, page) {
@@ -160,16 +196,28 @@ export async function boot({ id, needs = [], mount }) {
     tabs(page);
     return;
   }
+  // the frame is drawn before any data arrives, so a slow connection
+  // shows the site's own tabs and a loading state, never a blank page
+  tabs(page);
+  masthead(STATIC_META, page);
+  const hosts = ["#twocurves", "#chart"].map((sel) => $(sel)).filter(Boolean);
+  const loaders = hosts.map((h) => showLoading(h));
+  const slow = setTimeout(() => loaders.forEach((l) => l.note("Still loading: the data layer is a few megabytes and this connection is slow.")), 6000);
   try {
     const app = buildApp();
-    await loadInto(app, needs);
+    await loadInto(app, needs, (done, total) => loaders.forEach((l) => l.progress(done, total)));
+    clearTimeout(slow);
     document.title = page.file === "index.html"
       ? app.meta.title
       : `${page.title} | ${app.meta.short_title || app.meta.title}`;
     masthead(app.meta, page);
     tabs(page);
+    loaders.forEach((l) => l.note("Drawing the charts."));
     if (mount) await mount(app, page);
+    loaders.forEach((l) => l.done());
   } catch (err) {
+    clearTimeout(slow);
+    loaders.forEach((l) => l.done());
     tabs(page);
     failure("Could not load the data layer: "
       + `<code>${err.message}</code>. Run `
