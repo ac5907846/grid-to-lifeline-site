@@ -14,7 +14,12 @@
 <nav class="sitenav" id="sitenav" aria-label="Pages"></nav>
 
 <main id="page" class="section">
-  <p class="standfirst">The resilience of a system that depends on the grid can be read on four constructs: how much of the grid's failure reaches it, how long it withstands the outage, whether it recovers before the grid and by what means, and whether any of that has changed across storms. The grid below shows the two lifelines the paper measures, wastewater and cellular, on all four, every cell drawn live from the county-windows of the nine hurricanes. Select storms in the strip to redraw on a subset.</p>
+  <p class="standfirst">A lifeline that depends on the grid can be read on four constructs from two curves in event time: how much of the grid's failure reaches it (propagation), how long it holds before its first recorded disruption (buffering), whether it comes back before the grid and by what means (recovery autonomy), and whether any of that has changed across storms (adaptation). The curves below are the record itself: the share of customers without power in the declared counties, and the lifeline's disruption, for one hurricane or all nine. The four cards read the constructs off the curves with the paper's estimates and say when a number is detectable and when the record cannot show it.</p>
+
+  <div class="chart-block" id="twocurves"></div>
+
+  <h3 class="rule">The resilience signature, construct by construct</h3>
+  <p class="standfirst">The grid below shows the two lifelines the paper measures, wastewater and cellular, on all four constructs, every cell drawn live from the county-windows of the nine hurricanes. Select storms in the strip to redraw on a subset.</p>
 
   <div class="chart-block" id="chart"></div>
 
