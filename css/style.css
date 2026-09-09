@@ -779,6 +779,17 @@ button:disabled { opacity: .4; cursor: default; }
 @media (prefers-reduced-motion: reduce) { .spinner { animation: none; border-top-color: #8c8c8c; } }
 
 
+/* ---- the cascade map: play button and the spinning eye ---- */
+.map-stage { position: relative; }
+.btn-play { position: absolute; right: 10px; top: 10px; font-family: var(--sans); font-size: .82rem; font-weight: 600;
+  background: #2f6fd6; color: #fff; border: none; border-radius: 999px; padding: .4rem .9rem; cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,.25); letter-spacing: .01em; }
+.btn-play:hover { background: #245cb6; }
+.btn-play[aria-pressed="true"] { background: #14181d; }
+.eye-spin { animation: eyespin 1.6s linear infinite; transform-origin: 0 0; }
+@keyframes eyespin { to { transform: rotate(-360deg); } }
+@media (prefers-reduced-motion: reduce) { .eye-spin { animation: none; } }
+
 /* ---- the day board under the cascade panels ---- */
 .dayboard { margin-top: 1rem; padding: .75rem 1rem .6rem; }
 .dayboard h4 { margin-bottom: .5rem; }

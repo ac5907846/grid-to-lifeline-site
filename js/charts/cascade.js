@@ -19,7 +19,11 @@ const MH = 400;
 
 export function cascadeChart(host, app) {
   const meta = app.meta;
-  const state = { storm: "ian", frame: "declared", t: 0, playing: false, timer: null, layer: "share", showCell: true };
+  // deep links: ?storm=milton&t=2 opens that storm on that day, paused
+  const q = new URLSearchParams(location.search);
+  const state = { storm: meta.order.includes(q.get("storm")) ? q.get("storm") : "ian", frame: "declared",
+    t: q.has("t") && !Number.isNaN(Number(q.get("t"))) ? Math.max(-7, Math.min(30, Number(q.get("t")))) : 0,
+    playing: false, timer: null, layer: "share", showCell: true, autoplayed: q.has("t") };
 
   const bar = el("div.controls");
   const figHost = el("div.figure");
@@ -60,14 +64,17 @@ export function cascadeChart(host, app) {
       format: (v) => `day <strong>${v >= 0 ? "+" : ""}${v}</strong>${day && day.dates ? " " + (day.dates[day.t.indexOf(v)] || "") : ""}` },
     (v) => { state.t = v; drawCursor(); drawMap(); renderSide(); });
     bar.appendChild(control("Event day (landfall = 0)", sliderEl, { grow: true }));
-    const play = el("button.btn-quiet", { type: "button", text: "Play", onclick: () => (state.playing ? stop() : start()) });
-    bar.appendChild(control("", play));
-    state.playBtn = play;
+    // the play button sits on the map itself (see drawMap)
   }
 
+  function setPlayLabel() {
+    if (!state.playBtn) return;
+    state.playBtn.innerHTML = state.playing ? "&#10074;&#10074; Pause" : "&#9654; Play";
+    state.playBtn.setAttribute("aria-pressed", String(state.playing));
+  }
   function start() {
     state.playing = true;
-    state.playBtn.textContent = "Pause";
+    setPlayLabel();
     state.timer = setInterval(() => {
       state.t = state.t >= 20 ? -3 : state.t + 1;
       sliderEl.input.value = state.t;
@@ -77,9 +84,24 @@ export function cascadeChart(host, app) {
   }
   function stop() {
     state.playing = false;
-    if (state.playBtn) state.playBtn.textContent = "Play";
+    setPlayLabel();
     if (state.timer) clearInterval(state.timer);
     state.timer = null;
+  }
+  // the page opens playing; the first click anywhere (other than on
+  // the play button itself) hands control back to the reader
+  function autoplay() {
+    if (state.autoplayed) return;
+    state.autoplayed = true;
+    start();
+    const halt = (ev) => {
+      if (state.playBtn && state.playBtn.contains(ev.target)) return;
+      stop();
+      document.removeEventListener("pointerdown", halt, true);
+      document.removeEventListener("keydown", halt, true);
+    };
+    document.addEventListener("pointerdown", halt, true);
+    document.addEventListener("keydown", halt, true);
   }
 
   async function load() {
@@ -87,6 +109,33 @@ export function cascadeChart(host, app) {
     drawSeries();
     drawMap();
     renderSide();
+    autoplay();
+  }
+
+  /** The storm centre at hour h after landfall, interpolated along the fixes. */
+  function eyeAt(trk, h) {
+    const H = trk.hours;
+    if (!H || h < H[0] || h > H[H.length - 1]) return null;
+    let k = 0;
+    while (k < H.length - 2 && H[k + 1] < h) k += 1;
+    const f = (h - H[k]) / ((H[k + 1] - H[k]) || 1);
+    return { lon: trk.lon[k] + f * (trk.lon[k + 1] - trk.lon[k]), lat: trk.lat[k] + f * (trk.lat[k + 1] - trk.lat[k]),
+      vmax: trk.vmax[k] + f * (trk.vmax[k + 1] - trk.vmax[k]) };
+  }
+
+  /** A hurricane glyph: two spiral arms around an eye, spinning by CSS. */
+  function hurricaneGlyph(cx, cy, size, color) {
+    const s = size;
+    const arm = (sign) => `M0,${-0.28 * s * sign} C${0.55 * s * sign},${-0.35 * s * sign} ${0.75 * s * sign},${0.15 * s * sign} ${0.62 * s * sign},${0.62 * s * sign}`
+      + ` C${0.7 * s * sign},${0.2 * s * sign} ${0.45 * s * sign},${-0.05 * s * sign} ${0.2 * s * sign},${-0.1 * s * sign}Z`;
+    return svg("g", { class: "eye", transform: `translate(${cx.toFixed(1)},${cy.toFixed(1)})`, "pointer-events": "none" }, [
+      svg("circle", { r: 0.62 * s + 6, fill: color, opacity: 0.12 }),
+      svg("g", { class: "eye-spin" }, [
+        svg("path", { d: arm(1), fill: color, opacity: 0.92 }),
+        svg("path", { d: arm(-1), fill: color, opacity: 0.92 }),
+        svg("circle", { r: 0.22 * s, fill: "#fff", stroke: color, "stroke-width": 1.6 }),
+      ]),
+    ]);
   }
 
   let cursorNode = null;
@@ -220,11 +269,35 @@ export function cascadeChart(host, app) {
         f.add(svg("path", { d: trackPath(keep.map((k) => trk.lon[k]), keep.map((k) => trk.lat[k]), project), fill: "none", stroke: INK, "stroke-width": 1.4, "pointer-events": "none", opacity: 0.7 }));
       }
     }
-    f.add(svg("text", { x: 8, y: 18, "font-size": 12, fill: INK, "font-weight": 600,
+    // the storm centre at 12:00 UTC of the event day (the panels count
+    // days in UTC from the landfall date), a spinning glyph sized by wind
+    if (trk && trk.hours) {
+      const eye = eyeAt(trk, state.t * 24 + 12 - (trk.landfall_hour || 0));
+      if (eye) {
+        const [ex, ey] = project(eye.lon, eye.lat);
+        if (ex > -20 && ex < MW + 20 && ey > -20 && ey < MH + 20) {
+          f.add(hurricaneGlyph(ex, ey, 9 + 0.16 * Math.max(0, eye.vmax - 30), app.color(state.storm)));
+        }
+      }
+    }
+    // the key sits in the Gulf, where the map is empty
+    const kx = 10;
+    const ky = Math.round(MH * 0.58);
+    f.add(svg("text", { x: kx, y: ky, "font-size": 12, fill: INK, "font-weight": 600,
       text: `${app.name(state.storm)}, day ${state.t >= 0 ? "+" : ""}${state.t}` }));
-    f.add(svg("text", { x: 8, y: 34, "font-size": 10.5, fill: MUTED,
-      text: state.layer === "share" ? "Fill: share of customers without power (0 to 100%)" : "Fill: county-average rain that day (0 to 150 mm)" }));
-    f.add(svg("text", { x: 8, y: 48, "font-size": 10.5, fill: MUTED, text: "Circles: sewer releases starting that day" }));
+    f.add(svg("text", { x: kx, y: ky + 16, "font-size": 10.5, fill: MUTED,
+      text: state.layer === "share" ? "Fill: share of customers without power" : "Fill: county-average rain that day" }));
+    f.add(svg("text", { x: kx, y: ky + 30, "font-size": 10.5, fill: MUTED, text: "Circles: sewer releases starting that day" }));
+    f.add(svg("text", { x: kx, y: ky + 44, "font-size": 10.5, fill: MUTED, text: "Spiral: the storm centre at 12:00 UTC" }));
+    // the play button, on the map
+    if (!state.playBtn || !mapHost.contains(state.playBtn)) {
+      const play = el("button.btn-play", { type: "button", "aria-pressed": "false",
+        onclick: () => (state.playing ? stop() : start()) });
+      mapHost.classList.add("map-stage");
+      mapHost.appendChild(play);
+      state.playBtn = play;
+    }
+    setPlayLabel();
   }
 
   function renderSide() {

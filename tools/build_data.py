@@ -180,8 +180,11 @@ def build_geo():
     for ev, g in trk.groupby("storm"):
         g = g.sort_values("time")
         lf = g[g["is_landfall"]]
+        t0 = lf.iloc[0]["time"] if len(lf) else g["time"].iloc[0]
         tracks[ev] = {"lon": [r(v, 2) for v in g["lon"]], "lat": [r(v, 2) for v in g["lat"]],
                       "vmax": [r(v, 0) for v in g["vmax"]],
+                      "hours": [r((t - t0).total_seconds() / 3600.0, 1) for t in g["time"]],
+                      "landfall_hour": r(t0.hour + t0.minute / 60.0, 2),   # UTC hour of the landfall fix
                       "landfall": [r(lf.iloc[0]["lon"], 2), r(lf.iloc[0]["lat"], 2)] if len(lf) else None}
     write(tracks, "geo", "tracks.json")
     return {row["GEOID"]: row["NAME"] for _, row in fl.iterrows()}
