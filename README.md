@@ -53,8 +53,8 @@ its own data load. The tab bar is a set of links, not a scroll-spy.
 
 ```
 05_webapp/
-  index.html            the resilience signature (four constructs x two lifelines)
-  cascade.html          the cascade in event time, with a day scrubber and map
+  index.html            the cascade in event time, with a day scrubber and map (the landing page)
+  signature.html        the two curves of Fig 1 drawn from the record, then the resilience signature (four constructs x two lifelines)
   map.html              nine storm maps, any window quantity as fill
   dose.html             dose-response for both lifelines, model tables
   recovery.html         end classes, recovery lead, wet-well clock, cell lead

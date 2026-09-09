@@ -24,14 +24,15 @@ export function cascadeChart(host, app) {
   const bar = el("div.controls");
   const figHost = el("div.figure");
   const mapHost = el("div.figure");
-  const side = el("div.sidecard");
+  const side = el("div.sidecard.dayboard");
   const legHost = el("div");
   const capHost = el("p.caption");
   const grid = el("div.panelgrid.wide", {}, [
     el("div", {}, [figHost, legHost]),
-    el("div", {}, [mapHost, side]),
+    el("div", {}, [mapHost]),
   ]);
-  clear(host).append(bar, grid, capHost);
+  // the day's numbers run the full width under the two panels
+  clear(host).append(bar, grid, side, capHost);
 
   let day = null;
   const project = projector(pad2(boundsOf(app.geo.counties)), MW, MH, 8);
@@ -232,8 +233,8 @@ export function cascadeChart(host, app) {
     const fr = day.frames[state.frame] || day.frames.statewide;
     side.append(el("h4", { text: `${app.name(state.storm)}: day ${state.t >= 0 ? "+" : ""}${state.t}` }));
     if (i < 0) return;
-    const dl = el("dl");
-    const add = (k, v) => dl.append(el("dt", { text: k }), el("dd", { text: v }));
+    const dl = el("div.kvgrid");
+    const add = (k, v) => dl.append(el("div.kv", {}, [el("span.kv-k", { text: k }), el("span.kv-v", { text: v })]));
     add("Date", day.dates[i] || "");
     add("Sewer releases starting", fmt.count(fr.sewer[i]));
     if (fr.active) add("Releases recorded as active", fmt.count(fr.active[i]));
@@ -245,10 +246,12 @@ export function cascadeChart(host, app) {
     if (j >= 0) {
       add("Cell sites out (FCC)", `${fmt.count(ct.out[j])} of ${fmt.count(ct.served[j])}`);
       if (ct.power[j] !== null) add("Out for lack of power", `${fmt.count(ct.power[j])} (${fmt.pct(ct.power[j] / (ct.out[j] || 1), 0)})`);
-      side.append(dl, el("p", {}, [el("a", { href: `https://docs.fcc.gov/public/attachments/${ct.doc[j]}A1.pdf`, target: "_blank", rel: "noopener", text: `FCC report ${ct.doc[j]} (PDF)` })]));
-    } else side.append(dl);
+      dl.append(el("div.kv", {}, [el("span.kv-k", { text: "Source" }),
+        el("a.kv-v", { href: `https://docs.fcc.gov/public/attachments/${ct.doc[j]}A1.pdf`, target: "_blank", rel: "noopener", text: `FCC report ${ct.doc[j]} (PDF)` })]));
+    }
+    side.append(dl);
     const s = meta.storms[state.storm];
-    side.append(el("p", { text: `Landfall ${fmt.dateLabel(s.landfall)} at ${s.vmax} kt; ${s.ia_counties} counties with Individual Assistance; ${fmt.count(s.n_sewer)} sewer releases in the window, ${fmt.count(s.excess)} above baseline.` }));
+    side.append(el("p.dayboard-foot", { text: `Landfall ${fmt.dateLabel(s.landfall)} at ${s.vmax} kt; ${s.ia_counties} counties with Individual Assistance; ${fmt.count(s.n_sewer)} sewer releases in the window, ${fmt.count(s.excess)} above baseline.` }));
   }
 
   capHost.innerHTML = "<b>The releases follow the outage on the day.</b> In every storm the sewer releases peak on the landfall day or the day after, on the day of the outage peak in eight of nine; the cell sites out rise with the outage and fall a day or so ahead of it. Drag the day or press play to watch the county map fill and empty; each FCC point opens the report it was read from.";

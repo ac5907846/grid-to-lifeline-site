@@ -777,3 +777,14 @@ button:disabled { opacity: .4; cursor: default; }
   animation: spin .9s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .spinner { animation: none; border-top-color: #8c8c8c; } }
+
+
+/* ---- the day board under the cascade panels ---- */
+.dayboard { margin-top: 1rem; padding: .75rem 1rem .6rem; }
+.dayboard h4 { margin-bottom: .5rem; }
+.kvgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: .45rem 1.2rem; }
+.kv { display: flex; flex-direction: column; gap: .05rem; min-width: 0; }
+.kv-k { font-size: .74rem; color: var(--muted); line-height: 1.2; }
+.kv-v { font-size: .98rem; color: var(--ink); font-variant-numeric: tabular-nums; font-weight: 600; line-height: 1.25; }
+a.kv-v { font-weight: 500; font-size: .86rem; }
+.dayboard-foot { margin: .6rem 0 0 !important; color: var(--muted); font-size: .8rem !important; }

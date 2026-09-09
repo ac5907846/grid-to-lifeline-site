@@ -11,24 +11,19 @@
 
 <a class="skip" href="#page">Skip to content</a>
 <header class="masthead" id="masthead"><div class="masthead-inner"><h1>From grid failure to lifeline failure</h1><p class="subtitle">Interactive companion to a study of cross-infrastructure dependency and resilience across nine Florida hurricanes, 2017 to 2024.</p></div></header>
-<nav class="sitenav" id="sitenav" aria-label="Pages"><div class="sitenav-inner"><ul><li><a href="index.html" class="active" aria-current="page">Signature</a></li><li><a href="cascade.html">Cascade in time</a></li><li><a href="map.html">Storm maps</a></li><li><a href="dose.html">Dose-response</a></li><li><a href="recovery.html">Recovery</a></li><li><a href="adaptation.html">Adaptation</a></li><li><a href="notices.html">Notices</a></li><li><a href="county.html">County explorer</a></li><li><a href="data.html">Data and code</a></li></ul></div></nav>
+<nav class="sitenav" id="sitenav" aria-label="Pages"><div class="sitenav-inner"><ul><li><a href="index.html" class="active" aria-current="page">Cascade in time</a></li><li><a href="map.html">Storm maps</a></li><li><a href="dose.html">Dose-response</a></li><li><a href="recovery.html">Recovery</a></li><li><a href="adaptation.html">Adaptation</a></li><li><a href="notices.html">Notices</a></li><li><a href="county.html">County explorer</a></li><li><a href="signature.html">Signature</a></li><li><a href="data.html">Data and code</a></li></ul></div></nav>
 
 <main id="page" class="section">
-  <p class="standfirst">A lifeline that depends on the grid can be read on four constructs from two curves in event time: how much of the grid's failure reaches it (propagation), how long it holds before its first recorded disruption (buffering), whether it comes back before the grid and by what means (recovery autonomy), and whether any of that has changed across storms (adaptation). The curves below are the record itself: the share of customers without power in the declared counties, and the lifeline's disruption, for one hurricane or all nine. The four cards read the constructs off the curves with the paper's estimates and say when a number is detectable and when the record cannot show it.</p>
-
-  <div class="chart-block" id="twocurves"></div>
-
-  <h3 class="rule">The resilience signature, construct by construct</h3>
-  <p class="standfirst">The grid below shows the two lifelines the paper measures, wastewater and cellular, on all four constructs, every cell drawn live from the county-windows of the nine hurricanes. Select storms in the strip to redraw on a subset.</p>
+  <p class="standfirst">One storm at a time: the daily sewer releases by release start, the share of customers without power, and the cell sites out of service from the FCC's daily reports. Drag the day or press play to move the county map through the event.</p>
 
   <div class="chart-block" id="chart"></div>
 
-  <p class="note">The models' estimates (the incidence-rate ratios, odds ratios and era slopes) are those of the paper and do not refit when storms are removed; the counts, shares and histograms do. Open circles are the silent county-windows.</p>
+  <p class="note">The FCC's reporting area narrows as a storm passes, so the cell series is drawn as a share of the storm's largest reporting area; a county leaves the table when the FCC drops it, not when its outage ends. Release starts are dates, so the day of a release is known but not the hour.</p>
 
 </main>
 
 <div id="tooltip" class="tooltip" role="status" aria-live="polite"></div>
 
-<script type="module" src="js/pages/signature.js"></script>
+<script type="module" src="js/pages/cascade.js"></script>
 </body>
 </html>

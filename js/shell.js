@@ -7,11 +7,9 @@ import { el, clear, $ } from "./lib/dom.js";
 import * as fmt from "./lib/format.js";
 
 /* The site map, in tab order. The resilience signature carries
-   index.html, so the site opens on it. */
+   index.html, so the site opens on the cascade in event time. */
 export const PAGES = [
-  { id: "signature", file: "index.html", tab: "Signature",
-    title: "The resilience signature of two dependent lifelines" },
-  { id: "cascade", file: "cascade.html", tab: "Cascade in time",
+  { id: "cascade", file: "index.html", tab: "Cascade in time",
     title: "The cascade in event time" },
   { id: "map", file: "map.html", tab: "Storm maps",
     title: "Nine storms, 67 counties" },
@@ -25,6 +23,8 @@ export const PAGES = [
     title: "What the notices say" },
   { id: "county", file: "county.html", tab: "County explorer",
     title: "County-window explorer" },
+  { id: "signature", file: "signature.html", tab: "Signature",
+    title: "The resilience signature of two dependent lifelines" },
   { id: "data", file: "data.html", tab: "Data and code",
     title: "Data, reproduction, and links to the records" },
 ];
